@@ -5,26 +5,68 @@ db = SqliteDatabase('assets.db')
 
 
 class Base(Model):
+    """
+    Base Model
+    """
+
     class Meta:
         database = db
 
 
 class User(Base):
+    """
+    User Model
+
+    Attributes
+    ---------
+    id: int
+        Primary key of the user
+    name: String
+        Name of user
+    """
     id = IntegerField(primary_key=True)
     name = TextField()
 
 
 class Job(Base):
+    """
+    Job Model
+
+    Attributes
+    ---------
+    id: int
+        Primary key of the Job posting
+    title: String
+        Title of job
+    company: String
+        Name of Company
+    """
     id = IntegerField(primary_key=True)
     title = TextField()
     company = TextField()
 
 
 class Tag(Base):
+    """
+    Tag Model
+    Attributes
+    ---------
+    tag: Char
+        character that describes the tag
+    """
     tag = CharField()
 
 
 class UserTags(Base):
+    """
+    Tag Many To Many Table with Users
+    Attributes
+    ---------
+    tag: Foreign key
+        linked to Tag Table
+    user_id: Foreign key
+        linked to User Table
+    """
     tag = ForeignKeyField(Tag)
     user_id = ForeignKeyField(User)
 
@@ -33,6 +75,15 @@ class UserTags(Base):
 
 
 class JobTags(Base):
+    """
+    Tag Many To Many Table with Jobs Table
+    Attributes
+    ---------
+    tag: Foreign key
+        linked to Tag Table
+    job_id: Foreign key
+        linked to Job Table
+    """
     tag = ForeignKeyField(Tag)
     job_id = ForeignKeyField(Job)
 
@@ -46,12 +97,12 @@ class Assets:
 
     Attributes
     ---------
+    _db: SqliteDatabase
+        database used.
     _users: List
         list of users currently loaded
     _jobs: List
         list of jobs currently loaded
-    _tags: list
-        list of tags currently loaded
 
     Methods
     ---------
@@ -142,31 +193,33 @@ class Assets:
 
     def find_tag_match(self):
         """
-        Find number of matches between first_tags and second_tags
-        :param first_tags: List of tags for first object
-        :type first_tags: list
-        :param second_tags: List of tags for second object
-        :type second_tags: list
-        :return: number of matches
-        :rtype: int
+        Print number of matches between first_tags and second_tags
+        :return: None
         """
+        # Query to get tags linked with jobs
         tags_query = (Tag
                       .select(JobTags.job_id, fn.GROUP_CONCAT(Tag.tag).alias("tags"))
                       .join(JobTags, on=(Tag.id == JobTags.tag_id))
                       .group_by(JobTags.job_id)
                       .order_by(JobTags.job_id))
+
+        # Query to get the user id and the job posting's characteristics
         query = (User
                  .select(User.id.alias("userID"), Job.id, Job.title, Job.company, tags_query.c.tags)
-                 .join(UserTags, JOIN.LEFT_OUTER, on=(UserTags.user_id == User.id))
+                 .join(UserTags, JOIN.LEFT_OUTER, on=(UserTags.user_id == User.id))  # joining the user's tags with user
                  .join(JobTags, on=(JobTags.tag_id == UserTags.tag_id))
                  .join(Job, on=(JobTags.job_id == Job.id))
-                 .join(tags_query, on=(tags_query.c.job_id == Job.id))
-                 .group_by(User.id, Job.id)
-                 .having(fn.count(JobTags.tag_id) >= 2))
+                 .join(tags_query, on=(tags_query.c.job_id == Job.id))  # Link Previous query (tags_query) with current
+                 .group_by(User.id, Job.id)  # Grouping duplicate entries
+                 .having(fn.count(JobTags.tag_id) >= 2))  # Constraint for the "jobs that match at least 2 tags"
+
+        # Convert query to dictionary
         q = query.dicts()
         for job in q:
             self._matches.append(job)
+            # Convert the tag string into an array.
             tags = job['tags'].split(',')
+            # String description for the job.
             job_string = "'id': '{job_id}', 'title': '{title}', 'company': '{company}', 'tags': {tags}" \
                 .format(job_id=job['id'], title=job['title'], company=job['company'], tags=tags)
             print("User " + str(job['userID']) + ' matched to {' + job_string + '}')
