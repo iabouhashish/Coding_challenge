@@ -1,0 +1,41 @@
+[{
+  "id": 1,
+  "title": "Foo developer",
+  "company": "Bar industries",
+  "tags": ["a", "b", "c"]
+}, {
+  "id": 2,
+  "title": "Full-stack developer",
+  "company": "Bar industries",
+  "tags": ["b", "c", "e"]
+}, {
+  "id": 3,
+  "title": "Data scientist",
+  "company": "Bar industries",
+  "tags": ["d", "e", "g"]
+}, {
+  "id": 4,
+  "title": "Front-end developer",
+  "company": "Bar industries",
+  "tags": ["a", "b", "f"]
+}, {
+  "id": 5,
+  "title": "Devops Engineer",
+  "company": "Bar industries",
+  "tags": ["b", "e"]
+}, {
+  "id": 6,
+  "title": "Chief Technical Officer",
+  "company": "Bar industries",
+  "tags": ["c", "e", "g"]
+}, {
+  "id": 7,
+  "title": "Code Monkey",
+  "company": "Bar industries",
+  "tags": ["d", "g"]
+}, {
+  "id": 8,
+  "title": "Intern",
+  "company": "Bar industries",
+  "tags": ["c", "d", "f"]
+}]

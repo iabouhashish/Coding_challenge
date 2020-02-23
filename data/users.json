@@ -1,0 +1,17 @@
+[{
+  "id": 1,
+  "name": "Foo",
+  "tags": ["a", "b"]
+}, {
+  "id": 2,
+  "name": "Bar",
+  "tags": ["c", "g"]
+}, {
+  "id": 3,
+  "name": "Hello",
+  "tags": ["d", "e", "f"]
+}, {
+  "id": 4,
+  "name": "World",
+  "tags": ["a", "c", "d"]
+}]
