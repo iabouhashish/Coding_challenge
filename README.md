@@ -1,4 +1,4 @@
-# Coding Challenge for Luminari
+# Coding Challenge
 
 ####Dependencies
 To install dependencies, run 
